@@ -1,0 +1,39 @@
+{
+    "name": "saad/fractal",
+    "description": "Wraper for spatie fractal package",
+    "keywords": [
+        "spatie",
+        "laravel-fractal",
+        "laravel",
+        "fractal",
+        "lumen",
+        "api",
+        "transform"
+    ],
+    "require": {
+        "spatie/laravel-fractal": "^5.*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ahmed Saad",
+            "email": "a7mad.sa3d.2014@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Saad\\Fractal\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Saad\\Fractal\\FractalServiceProvider"
+            ],
+            "aliases": {
+                "SaadFractal": "Saad\\Fractal\\FractalFacade"
+            }
+        }
+    }
+}
