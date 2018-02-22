@@ -11,7 +11,7 @@
         "transform"
     ],
     "require": {
-        "spatie/laravel-fractal": "~5.0.1"
+        "spatie/laravel-fractal": "^5.0"
     },
     "license": "MIT",
     "authors": [
