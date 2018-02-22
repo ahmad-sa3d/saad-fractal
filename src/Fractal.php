@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * This Fractal Class Will automatically Parse Request includes and excludes
+ * And includes, excludes Parameters which will have the heighest Periority
+ *
+ * @author Ahmed saad <a7mad.sa3d.2014@gmail.com>
+ * @license MIT
+ */
+
 namespace Saad\Fractal;
 
 use Illuminate\Support\Facades\Request;
@@ -15,16 +23,14 @@ class Fractal extends SpatieFractal
         $this->manager = $manager;
 
         // Parse Includes
-        $include_query_string = $include_query_string ?: Request::get( 'include' );
-        if( $include_query_string )
-        {
-            $this->parseIncludes( $include_query_string );
+        $include_query_string = $include_query_string ?: Request::get('include');
+        if ($include_query_string) {
+            $this->parseIncludes($include_query_string);
         }
 
         // Parse Excludes
-        $exclude_query_string = $exclude_query_string ?: Request::get( 'exclude' );
-        if( $exclude_query_string  )
-        {
+        $exclude_query_string = $exclude_query_string ?: Request::get('exclude');
+        if ($exclude_query_string) {
             $this->manager->parseExcludes( $exclude_query_string );
         }
         
