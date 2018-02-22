@@ -75,7 +75,7 @@ class FractalRequestParser {
 	 */
 	public static function getInstance()
 	{
-		if (is_null(self::$instance)) {
+		if (is_null(self::$instance) || app()->runningUnitTests()) {
 			self::$instance = new self();
 		}
 
