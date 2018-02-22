@@ -88,8 +88,8 @@ class FractalRequestParser {
 	 */
 	protected function parseRequest()
 	{
-		$include = $this->request->get('include', '');
-		$exclude = $this->request->get('exclude', '');
+		$include = $this->request->input('include', '');
+		$exclude = $this->request->input('exclude', '');
 
 		$this->parseIncludes($include);
 		$this->parseExcludes($exclude);
