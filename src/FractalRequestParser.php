@@ -99,10 +99,41 @@ class FractalRequestParser {
 	{
 		if (self::mustRefresh()) {
 			self::$instance = new self();
+			$this->request = self::$instance->getRequest();
+			$this->includes = self::$instance->getIncludes();
+			$this->excludes = self::$instance->getExcludes();
 		}
 
-		return self::$instance;
+		return $this;
 	}
+
+	/**
+	 * Get instance Request Object
+	 * 
+	 * @return Illuminate\Http\Request Request
+	 */
+	public function getRequest() {
+		return $this->request;
+	}
+
+	/**
+	 * Get instance includes collection
+	 * 
+	 * @return Illuminate\Support\Collection Includes collection
+	 */
+	public function getIncludes() {
+		return $this->includes;
+	}
+
+	/**
+	 * Get instance excludes collection
+	 * 
+	 * @return Illuminate\Support\Collection Excludes collection
+	 */
+	public function getExcludes() {
+		return $this->excludes;
+	}
+
 
 	/**
 	 * Check if instance must be recreated
