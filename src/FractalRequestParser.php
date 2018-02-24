@@ -16,24 +16,28 @@ class FractalRequestParser {
 
 	/**
 	 * Instance Singletone
+	 * 
 	 * @var FractalRequestParser
 	 */
 	protected static $instance = null;
 
 	/**
 	 * Request
+	 * 
 	 * @var Illuminate\Http\Request
 	 */
 	protected $request;
 
 	/**
 	 * Includes Array
+	 * 
 	 * @var Illuminate\Support\Collections\Collection
 	 */
 	protected $includes;
 
 	/**
 	 * Excludes Array
+	 * 
 	 * @var Illuminate\Support\Collections\Collection
 	 */
 	protected $excludes;
@@ -41,6 +45,7 @@ class FractalRequestParser {
 
 	/**
 	 * Construct Singletone Instance
+	 * 
 	 * @param Request $request Illuminate\Http\Request
 	 */
 	protected function __construct()
@@ -51,6 +56,7 @@ class FractalRequestParser {
 
 	/**
 	 * Check if key exists in includes
+	 * 
 	 * @param  string  $key Key Path
 	 * @return boolean
 	 */
@@ -61,6 +67,7 @@ class FractalRequestParser {
 
 	/**
 	 * Check if key exists in excludes
+	 * 
 	 * @param  string  $key Key Path
 	 * @return boolean
 	 */
@@ -71,15 +78,40 @@ class FractalRequestParser {
 
 	/**
 	 * Get Or Create Parser Singletone
+	 * 
 	 * @return FractalRequestParser Parser
 	 */
 	public static function getInstance()
 	{
-		if (is_null(self::$instance) || app()->runningUnitTests()) {
+		if (is_null(self::$instance) || self::mustRefresh()) {
 			self::$instance = new self();
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * Refresh Instance If Needed
+	 * 
+	 * @return FractalRequestParser Parser
+	 */
+	public function refreshIfNeeded()
+	{
+		if (self::mustRefresh()) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Check if instance must be recreated
+	 * 
+	 * @return boolean True if it instance needs to be recreated
+	 */
+	protected static function mustRefresh()
+	{
+		return app()->runningUnitTests();
 	}
 
 	/**
@@ -97,6 +129,7 @@ class FractalRequestParser {
 
 	/**
 	 * Parse Includes
+	 * 
 	 * @param  string $includes include string
 	 * @return void
 	 */
@@ -107,6 +140,7 @@ class FractalRequestParser {
 
 	/**
 	 * Parse Excludes
+	 * 
 	 * @param  string $excludes include string
 	 * @return void
 	 */
@@ -117,6 +151,7 @@ class FractalRequestParser {
 
 	/**
 	 * Parse String
+	 * 
 	 * @param  string $string string to parse
 	 * @return void
 	 */
