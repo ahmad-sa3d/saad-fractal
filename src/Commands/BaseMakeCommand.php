@@ -108,9 +108,19 @@ abstract class BaseMakeCommand extends Command
 
     	$stub = $this->filesystem->get($stub_path);
 
-    	$content = $this->processStubContent($stub, $sub_directory);
+        $output_basename = $this->getStubOutputFileBaseName();
+    	$content = $this->processStubContent($stub, $sub_directory, $output_basename);
 
-    	$this->createFile("{$this->model}{$stub_name}.php", $sub_directory, $content);
+    	$this->createFile("{$output_basename}.php", $sub_directory, $content);
+    }
+
+    /**
+     * Get Output File Base name based on stub name
+     *
+     * @param string $stub_name Stub file base name
+     */
+    protected getStubOutputFileBaseName($stub_name) {
+        return "{$this->model}{$stub_name}";
     }
 
     /**
@@ -136,18 +146,22 @@ abstract class BaseMakeCommand extends Command
      * @param  string $content stub file content
      * @return string          processed stub content [output file content]
      */
-    protected function processStubContent($content, $sub_directory = null)
+    protected function processStubContent($content, $sub_directory = null, $output_basename = null)
     {
     	return preg_replace([
     		'/\$NAMESPACE\$/',
     		'/\$FULL_MODEL\$/',
             '/\$MODEL\$/',
-    		'/\$LOWER_MODEL\$/',
+            '/\$LOWER_MODEL\$/',
+    		'/\$DIRECTORY\$/',
+            '/\$FILE\$/',
     	], [
     		$this->getFullNamespace($sub_directory),
     		$this->full_model,
             $this->model,
     		snake_case($this->model),
+            $this->getOutputDirectoryName(),
+            $output_basename,
     	], $content);
     }
 
