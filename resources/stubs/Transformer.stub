@@ -1,0 +1,44 @@
+<?php
+
+namespace $NAMESPACE$;
+
+use $FULL_MODEL$;
+use Saad\Fractal\Transformers\TransformerAbstract;
+
+class $MODEL$Transformer extends TransformerAbstract
+{
+    /**
+     * Default Includes
+     * @var array
+     */
+    protected $defaultIncludes = ['id'];
+
+    /**
+     * Available Includes
+     * @var array
+     */
+    protected $availableIncludes = ['id'];
+
+
+    /**
+     * A Fractal transformer.
+     *
+     * @return array
+     */
+    public function transformWithDefault($MODEL$ $$LOWER_MODEL$)
+    {
+        return [
+
+        ];
+    }
+
+    /**
+     * Include ID
+     * @param  $MODEL$ $$LOWER_MODEL$ $MODEL$ Object
+     * @return Primitive           Id Primitive include
+     */
+    public function includeId($MODEL$ $$LOWER_MODEL$)
+    {
+        return $this->primitive((int) $$LOWER_MODEL$->id);
+    }
+}

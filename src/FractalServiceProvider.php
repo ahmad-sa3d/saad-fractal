@@ -3,6 +3,7 @@
 namespace Saad\Fractal;
 
 use Illuminate\Support\ServiceProvider;
+use Saad\Fractal\Commands\MakeTransformer;
 use Spatie\Fractal\FractalFacade as SpatieFractalFacade;
 use Spatie\Fractal\FractalServiceProvider as SpatieFractalServiceProvider;
 
@@ -15,7 +16,12 @@ class FractalServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Register Generator Command
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MakeTransformer::class,
+            ]);
+        }
     }
 
     /**
