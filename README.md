@@ -6,7 +6,7 @@
 
 You can pull in the package via composer:
 
-``` bash
+```bash
 	composer require saad/fractal
 ```
 
@@ -20,6 +20,28 @@ this package is compatible with laravel versions `>= 5.5`
 Exactly as spatie except that this package is automatically parse includes or excludes from parameters first if defined, otherwise it will look for query string includes and excludes
 
 Default serializer is `ArraySerializer`
+
+### `Console Generator`
+
+you can generate a new transformer class using the following command
+
+the following command will create "App\Transformers\UserTransformer.php"
+
+```bash
+	php artisan make:transformer 'App\User'
+```
+
+to create in nested folders "App\Transformers\Sub1\Sub2\UserTransformer.php"
+
+```bash
+	php artisan make:transformer 'App\User' --nest='Sub1\Sub2'
+	
+	# Nest Name could be:
+	
+	# Sub1/Sub2
+	# /Sub1/Sub2/
+	# Sub1\\Sub2
+```
 
 ### `Request Includes`
 
