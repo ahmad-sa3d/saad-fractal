@@ -9,6 +9,13 @@ use Illuminate\Foundation\Application;
 abstract class BaseMakeCommand extends Command
 {
     /**
+     * Output File name
+     * 
+     * @var string
+     */
+    protected $file_name;
+
+    /**
      * model name
      * @var string
      */
@@ -64,12 +71,23 @@ abstract class BaseMakeCommand extends Command
      */
     public function handle()
     {
+        // Model
     	$this->full_model = preg_replace("/^([\/\\\])|([\/\\\])$/", '', $this->argument('model'));
+        $this->full_model = str_replace('/', '\\', $this->full_model);
     	$this->model = class_basename($this->full_model);
 
+        // File Name
+        $this->file_name = $this->option('name') ?: null;
+
+        // Sub Directories
         $nest = preg_replace("/^([\/\\\])|([\/\\\])$/", '', $this->option('nest'));
-        $this->nested_level_namespace = '\\' . str_replace('/', '\\', $nest);
-        $this->nested_level_path = '/' . str_replace('\\', '/', $nest);
+
+        if ($nest) {
+            $this->nested_level_namespace = '\\' . str_replace('/', '\\', $nest);
+            $this->nested_level_path = '/' . str_replace('\\', '/', $nest);
+        } else {
+            $this->nested_level_namespace = $this->nested_level_path = '';
+        }
 
     	if (! is_a($this->full_model, Model::class, true)) {
     		$this->error("the given {$this->full_model} argument should be valid Model Name");
@@ -115,12 +133,12 @@ abstract class BaseMakeCommand extends Command
     }
 
     /**
-     * Get Output File Base name based on stub name
+     * Get Output File Base name
      *
      * @param string $stub_name Stub file base name
      */
     protected function getStubOutputFileBaseName($stub_name) {
-        return "{$this->model}{$stub_name}";
+        return $this->file_name ?: "{$this->model}{$stub_name}";
     }
 
     /**
@@ -129,9 +147,9 @@ abstract class BaseMakeCommand extends Command
      * @param  string $file_name     File stub name [Without model name prefix]
      * @param  string $sub_directory sub directory where fil;e saved if there is
      */
-    protected function delete($file_name, $sub_directory = '')
+    protected function delete($stub_name, $sub_directory = '')
     {
-    	$file_path = app_path("{$this->getOutputDirectoryName()}{$this->nested_level_path}{$sub_directory}/{$this->model}{$file_name}.php");
+    	$file_path = app_path("{$this->getOutputDirectoryName()}{$this->nested_level_path}{$sub_directory}/{$this->getStubOutputFileBaseName($stub_name)}.php");
 
     	if ($this->filesystem->exists($file_path)) {
     		if ($this->confirm("Delete {$file_path} ?", true)) {
