@@ -108,7 +108,7 @@ abstract class BaseMakeCommand extends Command
 
     	$stub = $this->filesystem->get($stub_path);
 
-        $output_basename = $this->getStubOutputFileBaseName();
+        $output_basename = $this->getStubOutputFileBaseName($stub_name);
     	$content = $this->processStubContent($stub, $sub_directory, $output_basename);
 
     	$this->createFile("{$output_basename}.php", $sub_directory, $content);
