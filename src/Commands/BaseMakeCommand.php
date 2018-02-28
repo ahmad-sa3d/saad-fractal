@@ -119,7 +119,7 @@ abstract class BaseMakeCommand extends Command
      *
      * @param string $stub_name Stub file base name
      */
-    protected getStubOutputFileBaseName($stub_name) {
+    protected function getStubOutputFileBaseName($stub_name) {
         return "{$this->model}{$stub_name}";
     }
 
