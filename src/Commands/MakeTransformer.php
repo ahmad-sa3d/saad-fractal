@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @package  saad/fractal
+ *
+ * @author Ahmed Saad <a7mad.sa3d.2014@gmail.com>
+ * @license MIT MIT
+ */
+
 namespace Saad\Fractal\Commands;
 
 use Illuminate\Console\Command;
@@ -13,7 +21,7 @@ class MakeTransformer extends BaseMakeCommand
      *
      * @var string
      */
-    protected $signature = 'make:transformer {model} {--nest=}';
+    protected $signature = 'make:transformer {model} {--nest=} {--name=}';
 
     /**
      * The console command description.

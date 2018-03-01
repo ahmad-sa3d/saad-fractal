@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @package  saad/fractal
+ *
+ * @author Ahmed Saad <a7mad.sa3d.2014@gmail.com>
+ * @license MIT MIT
+ */
+
 namespace Saad\Fractal;
 
 use Illuminate\Support\Facades\Facade;

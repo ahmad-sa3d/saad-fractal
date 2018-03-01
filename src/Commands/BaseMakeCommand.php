@@ -1,6 +1,15 @@
 <?php
+
+/**
+ * @package  saad/fractal
+ *
+ * @author Ahmed Saad <a7mad.sa3d.2014@gmail.com>
+ * @license MIT MIT
+ */
+
 namespace Saad\Fractal\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
@@ -173,6 +182,7 @@ abstract class BaseMakeCommand extends Command
             '/\$LOWER_MODEL\$/',
     		'/\$DIRECTORY\$/',
             '/\$FILE\$/',
+            '/\$TIME\$/',
     	], [
     		$this->getFullNamespace($sub_directory),
     		$this->full_model,
@@ -180,6 +190,7 @@ abstract class BaseMakeCommand extends Command
     		snake_case($this->model),
             $this->getOutputDirectoryName(),
             $output_basename,
+            Carbon::now()->toDayDateTimeString(),
     	], $content);
     }
 

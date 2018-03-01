@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @package  saad/fractal
+ *
+ * @author Ahmed Saad <a7mad.sa3d.2014@gmail.com>
+ * @license MIT MIT
+ * @date    $TIME$
+ */
+
 namespace $NAMESPACE$;
 
 use $FULL_MODEL$;
