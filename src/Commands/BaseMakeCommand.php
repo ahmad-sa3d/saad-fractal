@@ -81,12 +81,12 @@ abstract class BaseMakeCommand extends Command
     public function handle()
     {
         // Model
-    	$this->full_model = preg_replace("/^([\/\\\])|([\/\\\])$/", '', $this->argument('model'));
+        $this->full_model = preg_replace("/^([\/\\\])|([\/\\\])$/", '', $this->getModelValue());
         $this->full_model = str_replace('/', '\\', $this->full_model);
-    	$this->model = class_basename($this->full_model);
+        $this->model = class_basename($this->full_model);
 
         // File Name
-        $this->file_name = $this->option('name') ?: null;
+        $this->file_name = $this->getFilenameValue() ?: null;
 
         // Sub Directories
         $nest = preg_replace("/^([\/\\\])|([\/\\\])$/", '', $this->option('nest'));
@@ -98,10 +98,28 @@ abstract class BaseMakeCommand extends Command
             $this->nested_level_namespace = $this->nested_level_path = '';
         }
 
-    	if (! is_a($this->full_model, Model::class, true)) {
-    		$this->error("the given {$this->full_model} argument should be valid Model Name");
-    		return;
-    	}
+        if ($this->full_model && ! is_a($this->full_model, Model::class, true)) {
+            $this->error("the given {$this->full_model} argument should be valid Model Name");
+            return;
+        }
+    }
+
+    /**
+     * Get Model Value from command
+     * 
+     * @return string model name
+     */
+    protected function getModelValue() {
+        return $this->argument('model');
+    }
+
+    /**
+     * Get Output Filename Value from command
+     * 
+     * @return string model name
+     */
+    protected function getFilenameValue() {
+        return $this->option('name');
     }
 
     /**
@@ -127,18 +145,18 @@ abstract class BaseMakeCommand extends Command
      */
     protected function create($stub_name, $sub_directory = '')
     {
-    	$stub_path = "{$this->getStubsPath()}/$sub_directory/{$stub_name}.stub";
+        $stub_path = "{$this->getStubsPath()}/$sub_directory/{$stub_name}.stub";
 
-    	if (! $this->filesystem->exists($stub_path)) {
-    		throw new \Exception("Stub {$stub_path} not found!");
-    	}
+        if (! $this->filesystem->exists($stub_path)) {
+            throw new \Exception("Stub {$stub_path} not found!");
+        }
 
-    	$stub = $this->filesystem->get($stub_path);
+        $stub = $this->filesystem->get($stub_path);
 
         $output_basename = $this->getStubOutputFileBaseName($stub_name);
-    	$content = $this->processStubContent($stub, $sub_directory, $output_basename);
+        $content = $this->processStubContent($stub, $sub_directory, $output_basename);
 
-    	$this->createFile("{$output_basename}.php", $sub_directory, $content);
+        $this->createFile("{$output_basename}.php", $sub_directory, $content);
     }
 
     /**
@@ -158,13 +176,13 @@ abstract class BaseMakeCommand extends Command
      */
     protected function delete($stub_name, $sub_directory = '')
     {
-    	$file_path = app_path("{$this->getOutputDirectoryName()}{$this->nested_level_path}{$sub_directory}/{$this->getStubOutputFileBaseName($stub_name)}.php");
+        $file_path = app_path("{$this->getOutputDirectoryName()}{$this->nested_level_path}{$sub_directory}/{$this->getStubOutputFileBaseName($stub_name)}.php");
 
-    	if ($this->filesystem->exists($file_path)) {
-    		if ($this->confirm("Delete {$file_path} ?", true)) {
-    			return $this->filesystem->delete($file_path);
-    		}
-    	}
+        if ($this->filesystem->exists($file_path)) {
+            if ($this->confirm("Delete {$file_path} ?", true)) {
+                return $this->filesystem->delete($file_path);
+            }
+        }
     }
 
     /**
@@ -175,23 +193,23 @@ abstract class BaseMakeCommand extends Command
      */
     protected function processStubContent($content, $sub_directory = null, $output_basename = null)
     {
-    	return preg_replace([
-    		'/\$NAMESPACE\$/',
-    		'/\$FULL_MODEL\$/',
+        return preg_replace([
+            '/\$NAMESPACE\$/',
+            '/\$FULL_MODEL\$/',
             '/\$MODEL\$/',
             '/\$LOWER_MODEL\$/',
-    		'/\$DIRECTORY\$/',
+            '/\$DIRECTORY\$/',
             '/\$FILE\$/',
             '/\$TIME\$/',
-    	], [
-    		$this->getFullNamespace($sub_directory),
-    		$this->full_model,
+        ], [
+            $this->getFullNamespace($sub_directory),
+            $this->full_model,
             $this->model,
-    		snake_case($this->model),
+            snake_case($this->model),
             $this->getOutputDirectoryName(),
             $output_basename,
             Carbon::now()->toDayDateTimeString(),
-    	], $content);
+        ], $content);
     }
 
     /**
@@ -203,27 +221,27 @@ abstract class BaseMakeCommand extends Command
      */
     protected function createFile($file_name, $sub_directory, $content)
     {
-    	// Write File
-    	$directory = app_path("{$this->getOutputDirectoryName()}{$this->nested_level_path}{$sub_directory}");
+        // Write File
+        $directory = app_path("{$this->getOutputDirectoryName()}{$this->nested_level_path}{$sub_directory}");
 
         if (! $this->filesystem->exists($directory)) {
-    		$this->info('Creating Directory');
-    		$this->filesystem->makeDirectory($directory, 493, true, true);
-    	}
+            $this->info('Creating Directory');
+            $this->filesystem->makeDirectory($directory, 493, true, true);
+        }
 
-    	$file_path = "{$directory}/{$file_name}";
-    	if ($this->filesystem->exists($file_path)) {
-    		if (! $this->confirm("File {$file_name} already exists, overwrite?", false)) {
-    			$this->error('skipped');
-	    		return false;
-    		}
-    	} 
+        $file_path = "{$directory}/{$file_name}";
+        if ($this->filesystem->exists($file_path)) {
+            if (! $this->confirm("File {$file_name} already exists, overwrite?", false)) {
+                $this->error('skipped');
+                return false;
+            }
+        } 
 
-    	if ($result = $this->filesystem->put($file_path, $content)) {
-    		$this->info($file_name . " Created");
-    	}
+        if ($result = $this->filesystem->put($file_path, $content)) {
+            $this->info($file_name . " Created");
+        }
 
-    	return $result;
+        return $result;
     }
 
     /**
