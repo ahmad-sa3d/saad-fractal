@@ -42,6 +42,13 @@ class FractalRequestParser {
 	 */
 	protected $excludes;
 
+	/**
+	 * Options Array
+	 * 
+	 * @var Illuminate\Support\Collections\Collection
+	 */
+	protected $options;
+
 
 	/**
 	 * Construct Singletone Instance
@@ -74,6 +81,53 @@ class FractalRequestParser {
 	public function excludesHas($key)
 	{
 		return array_has($this->excludes, $key);
+	}
+
+	/**
+	 * Check if given key has any options
+	 * 
+	 * @param  string  $key Key Path
+	 * @return boolean
+	 */
+	public function optionsHas($key)
+	{
+		return array_key_exists($key, $this->options);
+	}
+
+	/**
+	 * Check if given key has any options
+	 * 
+	 * @param  string  $key Key Path
+	 * @return boolean
+	 */
+	public function optionsHasOption($key, $option)
+	{
+		return $this->optionsHas($key) && array_key_exists($option, $this->options[$key]);
+	}
+
+	/**
+	 * get key options
+	 * 
+	 * @param  string  $key Key Path
+	 * @param  mix    $default default value
+	 * @return boolean
+	 */
+	public function getOptions($key, $default = null)
+	{
+		return $this->optionsHas($key) ? $this->options[$key] : $default;
+	}
+
+	/**
+	 * get key specific option
+	 * 
+	 * @param  string  $key Key Path
+	 * @param  string    $option option name
+	 * @param  mix    $default default value
+	 * @return boolean
+	 */
+	public function getOption($key, $option, $default = null)
+	{
+		return $this->optionsHasOption($key, $option) ? $this->options[$key][$option] : $default;
 	}
 
 	/**
@@ -154,6 +208,8 @@ class FractalRequestParser {
 		$include = $this->request->input('include', '');
 		$exclude = $this->request->input('exclude', '');
 
+		$this->options = [];
+
 		$this->parseIncludes($include);
 		$this->parseExcludes($exclude);
 	}
@@ -189,9 +245,12 @@ class FractalRequestParser {
 	protected function parseString($string)
 	{
 		$final = [];
+
+		$final_options = [];
         
 		$mainKeys = collect(explode(',', trim($string, ',')));
 		$mainKeys->transform( function($item) {
+			// dump($item);
 			return $this->transformItem($item);
 		})->each(function ($item) use (&$final){
 			$final = array_merge_recursive($final, $item);
@@ -206,22 +265,49 @@ class FractalRequestParser {
 	 * @param  string $item string to parse into tree
 	 * @return array       String Tree
 	 */
-	protected function transformItem($item)
+	protected function transformItem($item, $parent = null)
 	{
-		$item = trim(trim($item, ':'), '.');
+		// $item = trim(trim($item, ':'), '.');
+		$item = trim($item, '.');
 		$first_dot_pos = strpos($item, '.');
 		if ($first_dot_pos === false) {
 			$first_colon_pos = strpos($item, ':');
 			if ($first_colon_pos === false) {
 				return [$item => true];
 			} else {
-				return [substr($item, 0, $first_colon_pos) => true];
+				// Has Option
+				$key = substr($item, 0, $first_colon_pos);
+				$parent = $parent ? "{$parent}.{$key}" : $key;
+				$this->parseOptions($item, substr($item, $first_colon_pos+1), $parent);
+				return [$key => true];
 			}
 		} else {
 			// Has Nested Includes
+			$key = substr($item, 0, $first_dot_pos);
+			$parent = $parent ? "{$parent}.{$key}" : $key;
 			return [
-				substr($item, 0, $first_dot_pos) => $this->transformItem(substr($item, $first_dot_pos+1))
+				$key => $this->transformItem(substr($item, $first_dot_pos+1), $parent),
 			];
 		}
+	}
+
+	/**
+	 * Parse Item Options
+	 * 
+	 * @param  string $item string to parse into tree
+	 * @return array       String Tree
+	 */
+	protected function parseOptions($item, $options, $parent) {
+		$options = explode(':', trim($options, ':'));
+
+		foreach ($options as $option) {
+			$option = explode('[', trim($option, ']'));
+			$args = count($option) > 1 ? explode('|', $option[1]) : [];
+
+			$this->options[$parent][$option[0]][] = $args;
+		}
+
+		// dump($item, $options, $parent);
+		// dump($this->options);
 	}
 }
