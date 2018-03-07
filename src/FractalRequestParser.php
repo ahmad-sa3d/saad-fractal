@@ -301,7 +301,7 @@ class FractalRequestParser {
 		$options = explode(':', trim($options, ':'));
 
 		foreach ($options as $option) {
-			$option = explode('[', trim($option, ']'));
+			$option = explode('(', trim($option, ')'));
 			$args = count($option) > 1 ? explode('|', $option[1]) : [];
 
 			$this->options[$parent][$option[0]][] = $args;
