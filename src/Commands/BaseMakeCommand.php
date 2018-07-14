@@ -100,8 +100,10 @@ abstract class BaseMakeCommand extends Command
 
         if ($this->full_model && ! is_a($this->full_model, Model::class, true)) {
             $this->error("the given {$this->full_model} argument should be valid Model Name");
-            return;
+            return false;
         }
+
+        return true;
     }
 
     /**
