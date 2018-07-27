@@ -31,6 +31,7 @@ class $MODEL$Transformer extends TransformerAbstract
     /**
      * A Fractal transformer.
      *
+     * @param $MODEL$ $$LOWER_MODEL$
      * @return array
      */
     public function transformWithDefault($MODEL$ $$LOWER_MODEL$)
@@ -43,7 +44,7 @@ class $MODEL$Transformer extends TransformerAbstract
     /**
      * Include ID
      * @param  $MODEL$ $$LOWER_MODEL$ $MODEL$ Object
-     * @return Primitive           Id Primitive include
+     * @return \League\Fractal\Resource\Primitive
      */
     public function includeId($MODEL$ $$LOWER_MODEL$)
     {
