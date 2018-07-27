@@ -24,7 +24,10 @@
     "autoload": {
         "psr-4": {
             "Saad\\Fractal\\": "src"
-        }
+        },
+        "files": [
+          "src/fallback.php"
+        ]
     },
     "extra": {
         "laravel": {
