@@ -25,3 +25,16 @@ if (! function_exists('public_path')) {
         return rtrim(app()->basePath('public/' . $path), '/');
     }
 }
+
+if (! function_exists('app_path')) {
+    /**
+     * Return the path to app dir
+     *
+     * @param null $path
+     * @return string
+     */
+    function app_path($path = null)
+    {
+        return app()->basePath() . '/app' . ($path ? '/' . $path : $path);
+    }
+}
