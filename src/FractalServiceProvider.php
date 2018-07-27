@@ -44,8 +44,10 @@ class FractalServiceProvider extends ServiceProvider
         );
 
         // Bind Spatie Package Aliace [ FACADE ]
-        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-        $loader->alias('Fractal', SpatieFractalFacade::class);
+        if (class_exists('Illuminate\Foundation\AliasLoader')) {
+            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+            $loader->alias('Fractal', SpatieFractalFacade::class);
+        }
 
 
         // Add To service Container

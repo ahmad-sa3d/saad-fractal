@@ -65,12 +65,12 @@ abstract class BaseMakeCommand extends Command
      *
      * @return void
      */
-    public function __construct(Filesystem $filesystem, Application $app)
+    public function __construct(Filesystem $filesystem)
     {
         parent::__construct();
 
         $this->filesystem = $filesystem;
-        $this->app_name = $app->getNamespace();
+        $this->app_name = app()->getNamespace();
     }
 
     /**
