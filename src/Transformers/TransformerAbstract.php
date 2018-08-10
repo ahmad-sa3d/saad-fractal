@@ -15,11 +15,25 @@
 
 namespace Saad\Fractal\Transformers;
 
+use League\Fractal\Resource\Primitive;
 use League\Fractal\TransformerAbstract as BaseTransformerAbstract;
+use League\Fractal\Resource\NullResource;
 use Exception;
 
+/**
+ * @property array defaultIncludes
+ */
 abstract class TransformerAbstract extends BaseTransformerAbstract
 {
+    /**
+     * Strict Mode Status
+     * when true null resources will be null
+     * when false null resources will be []
+     *
+     * @var bool
+     */
+    protected static $strict_mode = true;
+
     /**
      * Externals to add to output
      * @var array
@@ -29,7 +43,7 @@ abstract class TransformerAbstract extends BaseTransformerAbstract
     /**
      * Add to default includes
      * @param string|array $defaults_to_add keys to add to default includes
-     * @return  instance.   to allow method chaining
+     * @return TransformerAbstract .   to allow method chaining
      */
     public function addDefaultInclude($defaults_to_add)
     {
@@ -40,10 +54,10 @@ abstract class TransformerAbstract extends BaseTransformerAbstract
 
     /**
      * Add External Key Value
-     * @param string $key   Key
-     * @param mix $value Value
+     * @param string $key Key
+     * @param mixed $value Value
+     * @return TransformerAbstract .   to allow method chaining
      * @throws Exception Invalid key exception
-     * @return  instance.   to allow method chaining
      */
     public function addExternal($key, $value)
     {
@@ -62,7 +76,7 @@ abstract class TransformerAbstract extends BaseTransformerAbstract
      * you should use 'transformWithDefault' method
      * the reason is do this is to append externals to output
      *
-     * @param  object $object Object being transformmed
+     * @param  object $object Object being transformed
      * @return array
      */
     final public function transform($object)
@@ -92,5 +106,42 @@ abstract class TransformerAbstract extends BaseTransformerAbstract
         }
 
         return $externals;
+    }
+
+    /**
+     * Create a new null resource object.
+     *
+     * @return NullResource
+     */
+    protected function null()
+    {
+        if (self::$strict_mode) {
+            return new Primitive(null);
+        }
+
+        return new NullResource();
+    }
+
+    /**
+     * Set Strict Mode Status
+     *
+     * @param bool $enable
+     */
+    public static function strictMode(bool $enabled = true) {
+        self::$strict_mode = $enabled;
+    }
+
+    /**
+     * Enable Strict Mode
+     */
+    public static function enableStrictMode() {
+        self::strictMode(true);
+    }
+
+    /**
+     * Disable Strict Mode
+     */
+    public static function disableStrictMode() {
+        self::strictMode(false);
     }
 }
