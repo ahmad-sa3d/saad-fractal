@@ -15,6 +15,11 @@ The package will automatically register itself.
 ### Laravel Version
 this package is compatible with laravel versions `>= 5.5`
 
+### Changelog
+> __V 1.2.0__
+1. Add Strict Mode, so for null resources instead of returning empty array it will return null,
+By Default strict mode is Enabled
+    
 ## use
 
 Exactly as spatie except that this package is automatically parse includes or excludes from parameters first if defined, otherwise it will look for query string includes and excludes
@@ -106,7 +111,58 @@ to create in nested folders "App\Transformers\Sub1\Sub2\UserTransformer.php"
 
 ## Transformer Abstract Class
 
-this package has a base abstract Transformer Class `Saad\Fractal\Transformers\ TransformerAbstract ` you could use as the base class of your transformers, this class is based on extends `League\Fractal\TransformerAbstract` and adds the following features:
+this package has a base abstract Transformer Class `Saad\Fractal\Transformers\TransformerAbstract` you could use as the base class of your transformers, this class is based on extends `League\Fractal\TransformerAbstract` and adds the following features:
+### *`TransformerAbstract::strictMode(bool)`*
+> This mode added since V 1.2.0 <br>
+
+null resources is returning empty array, when enable strict mode it will return NULL instead.
+By default strict mode is enabled
+
+To control strict mode you could call one of these methods in one of the service providers boot method:
+
+> Enable Strict Mode (Enabled By Default): <br>
+> `TransformerAbstract::strictMode(true)` <br>
+> `TransformerAbstract::enableStrictMode()`
+
+> Disable Strict Mode: <br>
+> `TransformerAbstract::strictMode(false)` <br>
+> `TransformerAbstract::disableStrictMode()`
+
+``` php
+
+    // Assume we have this transformer
+    class CountryTransformer extends TransformerAbstract {
+        ...
+        
+        includeRegions(Country $country) {
+            // assume there are no regions
+            return $this->null();
+        }
+    }
+    
+	$transformer = new CountryTransformer();
+	
+	$output = Fractal::create($country, $transformer);
+	
+	// output when strict mode is enabled (default status)
+	[
+	    ...
+		'regions' => null,
+	]
+	
+	
+	// Disable Strict Mode
+	TransformerAbstract::disableStrictMode();
+	
+	$output = Fractal::create($country, $transformer);
+    	
+    // output when strict mode is disabled
+    [
+        ...
+        'regions' => [],
+    ]
+	
+```
 
 ### *`transform()`* replaced by *`transforWithDefault()`*
 > you should use __`transforWithDefault()`__ methodcinstead of __`transform()`__ method
